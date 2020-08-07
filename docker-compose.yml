@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  traccar:
+    image: traccar/traccar:4.10-alpine
+    restart: always
+    container_name: traccar
+    depends_on:
+      - mysql
+    ports:
+      - "80:8082"
+      - "5000-5150:5000-5150"
+      - "5000-5150:5000-5150/udp"
+    environment:
+      TZ: Europe/Berlin
+    security_opt:
+     - label=disable
+    volumes:
+    - type: bind
+      source: /var/docker/traccar/logs
+      target: /opt/traccar/logs
+    - type: bind
+      source: compose/local/traccar/traccar.xml
+      target: /opt/traccar/conf/traccar.xml
+      read_only: true
+
+  mysql:
+    image: mysql/mysql-server:8.0
+    restart: always
+    container_name: mysql
+    environment:
+       TZ: Europe/Berlin
+    security_opt:
+     - label=disable
+    volumes:
+     - type: bind
+       source: /var/docker/mysql/data
+       target: /var/lib/mysql
+     - type: bind
+       source: compose/local/mysql/my.cnf
+       target: /etc/my.cnf
+       read_only: true
