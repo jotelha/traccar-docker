@@ -79,3 +79,23 @@ The **recommended solution** for production use is to link to an external MySQL 
 - -Xms512m
 - -Xmx512m
 - -Djava.net.preferIPv4Stack=true
+
+### Container composition
+
+Tested with `podman` and `podman-compose`. 
+
+At first launch, MySQL database has to be initialized with root password and
+traccar database and user credentials, i.e. by bringing up a client session via
+
+    podman-copose up -d
+    docker exec -it mysql mysql -uroot -p
+
+and 
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'new root password';
+CREATE DATABASE traccar;
+
+CREATE USER 'traccar'@'localhost' IDENTIFIED WITH mysql_native_password BY 'traccar';
+GRANT ALL PRIVILEGES ON traccar.* TO 'traccar'@'localhost';
+FLUSH PRIVILEGES;
+```

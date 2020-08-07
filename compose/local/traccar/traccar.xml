@@ -23,8 +23,8 @@
     This is the default traccar/traccar:4.10-alpine database configuration as generated with
 
         podman run \
-            --rm \
-            --entrypoint cat \
+            &#45;&#45;rm \
+            &#45;&#45;entrypoint cat \
             traccar/traccar:4.10-alpine \
             /opt/traccar/conf/traccar.xml > /var/docker/traccar/traccar.xml
 
@@ -48,6 +48,6 @@
     <entry key='database.driver'>com.mysql.cj.jdbc.Driver</entry>
     <entry key='database.url'>jdbc:mysql://mysql:3306/traccar?serverTimezone=UTC&amp;useSSL=false&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;useUnicode=yes&amp;characterEncoding=UTF-8&amp;sessionVariables=sql_mode=''</entry>
     <entry key='database.user'>traccar</entry>
-    <entry key='database.password'>[PASSWORD]</entry>
+    <entry key='database.password'>traccar</entry>
 
 </properties>

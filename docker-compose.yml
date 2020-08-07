@@ -8,7 +8,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "80:8082"
+      - "8082:8082"
       - "5000-5150:5000-5150"
       - "5000-5150:5000-5150/udp"
     environment:
@@ -20,7 +20,7 @@ services:
       source: /var/docker/traccar/logs
       target: /opt/traccar/logs
     - type: bind
-      source: compose/local/traccar/traccar.xml
+      source: ./compose/local/traccar/traccar.xml
       target: /opt/traccar/conf/traccar.xml
       read_only: true
 
@@ -28,6 +28,9 @@ services:
     image: mysql/mysql-server:8.0
     restart: always
     container_name: mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+      - "127.0.0.1:33060:33060"
     environment:
        TZ: Europe/Berlin
     security_opt:
@@ -37,6 +40,6 @@ services:
        source: /var/docker/mysql/data
        target: /var/lib/mysql
      - type: bind
-       source: compose/local/mysql/my.cnf
+       source: ./compose/local/mysql/my.cnf
        target: /etc/my.cnf
        read_only: true
