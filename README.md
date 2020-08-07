@@ -83,10 +83,21 @@ The **recommended solution** for production use is to link to an external MySQL 
 ### Container composition
 
 Tested with `podman` and `podman-compose`. 
+Suggestion for up-to-date podman-compose:
+
+```bash
+mkdir -p ${HOME}/venv
+python -m venv ${HOME}/venv/containers-python-3.6
+source ${HOME}/venv/containers-python-3.6/bin/activate
+pip install --upgrade pip
+pip install pyyaml
+pip install git+https://github.com/containers/podman-compose.git@devel
+```
 
 At first launch, MySQL database has to be initialized with root password and
 traccar database and user credentials, i.e. by bringing up a client session via
 
+    source ${HOME}/venv/containers-python-3.6/bin/activate
     podman-copose up -d
     docker exec -it mysql mysql -uroot -p
 
