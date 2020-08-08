@@ -1,6 +1,29 @@
 version: '3.8'
 
 services:
+  httpd:
+    image: httpd:2.4
+    restart: always
+    container_name: httpd
+    depends_on:
+      - traccar
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: Europe/Berlin
+    security_opt:
+     - label=disable
+    volumes:
+    - type: bind
+      source: ./compose/local/httpd/usr/local/apache2/conf/httpd.conf
+      target: /usr/local/apache2/conf/httpd.conf
+      read_only: true
+    - type: bind
+      source: ./compose/local/httpd/etc/apache2/sites-available/traccar.conf
+      target: /etc/apache2/sites-available/traccar.conf
+      read_only: true
+    
   traccar:
     image: traccar/traccar:4.10-debian
     restart: always
@@ -8,7 +31,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "80:8082"
+    #  - "80:8082"
       - "5000-5150:5000-5150"
       - "5000-5150:5000-5150/udp"
     environment:
