@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   httpd:
-    image: httpd:2.4
+    image: httpd:2.4-traccar
+    build:
+        context: ./compose/local/httpd
+        dockerfile: Dockerfile
     restart: always
     container_name: httpd
     depends_on:
@@ -15,15 +18,48 @@ services:
     security_opt:
      - label=disable
     volumes:
+    # - type: bind
+    #   source: /home/container/certs/jotelha/tls_cert.pem
+    #   target: /etc/ssl/certs/server.crt
+    #   read_only: true
+    # - type: bind
+    #   source: /home/container/certs/jotelha/tls_key.pem
+    #   target: /etc/ssl/private/server.key
+    #   read_only: true
+    - certs:/etc/letsencrypt:ro
     - type: bind
       source: ./compose/local/httpd/usr/local/apache2/conf/httpd.conf
       target: /usr/local/apache2/conf/httpd.conf
       read_only: true
     - type: bind
-      source: ./compose/local/httpd/etc/apache2/sites-available/traccar.conf
-      target: /etc/apache2/sites-available/traccar.conf
+      source: ./compose/local/httpd/usr/local/apache2/conf/extra/httpd-ssl.conf
+      target: /usr/local/apache2/conf/extra/httpd-ssl.conf
       read_only: true
-    
+    - type: bind
+      source: ./compose/local/httpd/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      target: /usr/local/apache2/conf/extra/httpd-vhosts.conf
+      read_only: true
+
+  # see https://certbot-dns-digitalocean.readthedocs.io/en/stable/
+  certbot:
+    image: certbot/dns-digitalocean:v1.7.0
+    restart: "no"
+    container_name: certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: Europe/Berlin
+    security_opt:
+     - label=disable
+    command: ["certonly", "-n", "-m", "johannes.laurin@gmail.com", "--agree-tos", "--dns-digitalocean", "--dns-digitalocean-credentials", "/run/secrets/digital-ocean-api-access-token.ini", "-d", "*.jotelha.de"]
+    # "--server", "https://acme-staging-v02.api.letsencrypt.org/directory"
+    volumes:
+    - certs:/etc/letsencrypt
+  #  - type: bind
+  #    source: /var/local/containers/certbot/var/lib/letsencrypt
+  #    target: /var/lib/letsencrypt
+        
   traccar:
     image: traccar/traccar:4.10-debian
     restart: always
@@ -63,3 +99,6 @@ services:
        source: ./compose/local/mysql/my.cnf
        target: /etc/my.cnf
        read_only: true
+
+volumes:
+  certs:

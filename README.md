@@ -80,6 +80,8 @@ The **recommended solution** for production use is to link to an external MySQL 
 - -Xmx512m
 - -Djava.net.preferIPv4Stack=true
 
+## Podman-enabled setup
+
 ### Container composition
 
 Tested with `podman` and `podman-compose`. 
@@ -110,3 +112,18 @@ CREATE USER 'traccar'@'localhost' IDENTIFIED WITH mysql_native_password BY 'trac
 GRANT ALL PRIVILEGES ON traccar.* TO 'traccar'@'localhost';
 FLUSH PRIVILEGES;
 ```
+
+### Secrets
+
+podman does not handle `secrets` the way docker does. Similar behavior can be achieved with
+a per-user configuration file `$HOME/.config/containers/mounts.conf` on the host containing, 
+for example, a line
+
+    /home/container/secrets:/run/secrets
+
+that will make the content of `/home/user/containers/secrets` on the host available under
+`/run/secrets` within *all containers* of the evoking user. The owner and group within 
+the container will be `root:root` and file permissions will correspond to permissions 
+on the host file system. Thus, an entrypoint script might have to adapt permissions.
+
+

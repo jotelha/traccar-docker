@@ -1,0 +1,6 @@
+*.key
+*.pem
+*.srl
+*.tar.gz
+**/
+passw
