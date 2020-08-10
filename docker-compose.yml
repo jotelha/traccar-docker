@@ -52,7 +52,7 @@ services:
       TZ: Europe/Berlin
     security_opt:
      - label=disable
-    command: ["certonly", "-n", "-m", "johannes.laurin@gmail.com", "--agree-tos", "--dns-digitalocean", "--dns-digitalocean-credentials", "/run/secrets/digital-ocean-api-access-token.ini", "-d", "*.jotelha.de"]
+    command: ["certonly", "-n", "-m", "johannes.laurin@gmail.com", "--agree-tos", "--dns-digitalocean", "--dns-digitalocean-credentials", "/run/secrets/digital-ocean-api-access-token.ini", "--expand", "-d", "jotelha.de", "-d", "*.jotelha.de"]
     # "--server", "https://acme-staging-v02.api.letsencrypt.org/directory"
     volumes:
     - certs:/etc/letsencrypt
